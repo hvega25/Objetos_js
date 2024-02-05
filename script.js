@@ -1,9 +1,23 @@
 let llistatCicles = [];
-let llistaModulos = [];
+let llistatModulos = [];
+
+let Cicle;
 
 
-function calculHores() {
-    console.log("hola")
+// 10. Crea una funció que calculi les hores que té el cicle en funció dels mòduls afegits
+
+function calculoHores(index) {
+    let contador = 0;
+
+    if (llistatModulos.length >= 1) {
+        for (let a = 0; a < llistatModulos.length; a++) {
+            if (parseInt(index) == parseInt(llistatModulos[a].cicle)) {
+                contador += parseInt(`${llistatModulos[a].hores}`);
+            }
+        }
+    }
+
+    console.log(contador);
 }
 
 //1. Crea la classe Cicle
@@ -11,7 +25,7 @@ function calculHores() {
 class cicle {
 
     ////2. Crea el constructor de la classe cicle i modifica la manera de crear l’objecte al codi donat
-    constructor(nom, categoria, numAlumnes, abreviatura,llistaModulos) {
+    constructor(nom, categoria, numAlumnes, abreviatura, llistatModulos) {
         this.nom = nom;
         this.categoria = categoria;
         this.numAlumnes = numAlumnes;
@@ -22,26 +36,43 @@ class cicle {
 
 
         //7. Al constructor crea l’array de mòduls, inicialment buida
-        this.llistaModulos = [];
+        this.llistatModulos = [];
     }
 
 
     //6. Crea una funció toString() que imprimeixi tota la informació del cicle
-    toString() {
-        let retorno = `${this.nom} ${this.categoria} ${this.numAlumnes} ${this.abreviatura}}`;
+    //9. Modifica la funció toString per a que també imprimeixi els mòduls de cada cicle, fes que aquests
+    // apareguin ordenats pel seu número
+    toString1(cicle) {
+        let retorno = '';
+
+        retorno = `Nombre: ${llistatCicles[cicle].nom}, Categoria: ${llistatCicles[cicle].categoria}, Número de alumnos: ${llistatCicles[cicle].numAlumnes}, Abreviatura: ${llistatCicles[cicle].abreviatura} `;
+
+        llistatModulos.sort((a, b) => a.num - b.num);
+        if (llistatModulos.length >= 1) {
+            for (let a = 0; a < llistatModulos.length; a++) {
+                if (parseInt(cicle) == parseInt(llistatModulos[a].cicle)) {
+                    retorno += ` - ID cicle: ${llistatModulos[a].cicle}, Nombre módulo: ${llistatModulos[a].nom}, Número de módulo: ${llistatModulos[a].num}, Horas: ${llistatModulos[a].hores}`;
+                }
+            }
+
+        }
+
         console.log(retorno);
     }
 
+    //4. Crea el mètode setNumEdicions i fes que aquest valor incrementi cada vegada que edites el cicle.
     setNumEdicions() {
-        //4. Crea el mètode setNumEdicions i fes que aquest valor incrementi cada vegada que edites el cicle.
         this.numEdicions++;
+
 
         //5. Guarda la data de l’última vegada que has editat el cicle.
         this.data = new Date();
 
-        //cambiar
-        //  console.log(`${this.setNumEdicions}  ${this.data}`);
+
     }
+
+
 }
 
 
@@ -52,7 +83,7 @@ function afegirCicle() {
     let abreviatura = document.getElementById("cicle_abr").value;
 
     //let cicle = {nom: nom, categoria: categoria, numAlumnes: numAlumnes, abreviatura: abreviatura}
-    let Cicle = new cicle(nom, categoria, numAlumnes, abreviatura, llistaModulos);
+    Cicle = new cicle(nom, categoria, numAlumnes, abreviatura, llistatModulos);
 
 
     if (document.getElementById("editCicle").value === "-1") {
@@ -62,9 +93,10 @@ function afegirCicle() {
 
     } else {
         //Editar cicle
-        Cicle.setNumEdicions();
+
 
     }
+
 
     //Actualitzem el selector
     actualitzarSelector();
@@ -76,6 +108,26 @@ function afegirCicle() {
     netejarFormularis();
 
     document.getElementById("editCicle").value = -1;
+
+    //Prueba
+    //console.table(llistatCicles);
+}
+
+//1. Crea la classe Modul
+class Modul {
+    //2. Crea el constructor de la classe
+    constructor(cicle, modul_nom, modul_num, modul_hores) {
+        this.cicle = cicle;
+        this.modul_nom = modul_nom;
+        this.modul_num = modul_num;
+        this.modul_hores = modul_num;
+    }
+
+    toString2(){
+        let retorno = '';
+        retorno = `MP  ${this.modul_num}. ${this.modul_nom} ${this.modul_hores}h`
+    }
+
 }
 
 function afegirModul() {
@@ -87,22 +139,22 @@ function afegirModul() {
     let modul = {cicle: cicle, nom: modul_nom, num: modul_num, hores: modul_hores}
 
     //8. Crea una funció que permeti afegir un mòdul a la llista de mòduls
-    afegirModulos(modul);
+    afegirModulaLlistaModul(modul);
+
+    Cicle.toString1(cicle);
 
 
     //Printem la llista
-//    printLlistat();
+    //printLlistat();
 
     //Netegem els formularis
     netejarFormularis();
-    //console.log(llistatCicles);
+    //console.table(llistatModulos)
+
 }
 
-function afegirModulos(valor) {
-    llistaModulos.push(valor);
-    console.log("Estoy desde afegirModulos");
-    console.table(llistaModulos);
-    console.table(llistatCicles);
+function afegirModulaLlistaModul(arreglo) {
+    llistatModulos.push(arreglo);
 }
 
 //Funció per llistar els cicles
@@ -116,7 +168,7 @@ function printLlistat(llistat) {
 
                     <button type="button" onClick="removeCicle(${index})" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2">Eliminar</button>
                     <button type="button" onClick="editCicle(${index})" class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2">Editar</button>
-                    <button type="button" onClick="calculHores(${index})" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2">Càlcul hores</button>
+                    <button type="button" onClick="calculoHores(${index})" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2">Càlcul hores</button>
 
 
                 </div>`;
@@ -144,6 +196,8 @@ function removeCicle(i) {
 
 //Funció per editar un cicle
 function editCicle(i) {
+    llistatCicles[i].setNumEdicions();
+
     document.getElementById("cicle_nom").value = llistatCicles[i].nom;
     document.getElementById("cicle_categoria").value = llistatCicles[i].categoria;
     document.getElementById("cicle_alumnes").value = llistatCicles[i].numAlumnes;
